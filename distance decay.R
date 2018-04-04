@@ -1,4 +1,6 @@
-### from:Bergamin, R. S., Bastazini, V. A. G., Vélez-Martin, E., Debastiani, V., Zanini, K. J., Loyola, R., & Müller, S. C. (2017). Linking beta diversity patterns to protected areas: lessons from the Brazilian Atlantic Rainforest. Biodiversity and ConservationDOI 10.1007/s10531-017-1315-y 
+### from:Bergamin, R. S., Bastazini, V. A. G., Vélez-Martin, E., Debastiani, V., Zanini, K. J., Loyola, R., & Müller, S. C. (2017). Linking beta diversity patterns to protected areas: lessons from the Brazilian Atlantic Rainforest. 
+#Biodiversity and Conservation 26 (7): 1557–1568.
+#DOI 10.1007/s10531-017-1315-y 
 ##code for fitting multiple models (i.e., intercept only, linear, exponential and  assintotic) for distance decay curves
 
 install.packages("bbmle")
