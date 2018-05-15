@@ -19,6 +19,7 @@ PW.dist=pw.adonis.dist(as.matrix(x),factors,sim.method="bray",p.adjust.m = "bonf
 #the matrix must be transformed into a square matrix using the “as.matrix” function
 
 #start of function
+pw.adonis.dist = function(x,factors, sim.method, p.adjust.m)
 {
   library(vegan)
   co = as.matrix(combn(unique(factors),2))
