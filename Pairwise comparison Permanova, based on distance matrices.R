@@ -42,9 +42,4 @@ pw.adonis.dist = function(x,factors, sim.method, p.adjust.m)
   return(pairw.res)
 }
 #end of function
-###############################
 
-References:
-  Baselga A, Orme D, Villeger S, De Bortoli J, Leprieur F (2015) Betapart. R package version 1.3. https://cran.r-project.org/web/packages/betapart/index.html. Accessed 11 May 2016
-Oksanen J, Blanchet FG, Kindt R, Legendre P, Minchin PR, O'Hara RB, Simpson GL, Solymos P, Stevens MHH, Wagner H (2016) Vegan: community ecology package. R package version 2.3-5. https://cran.r-project.org/web/packages/betapart/index.html. Accessed 28 September 2016
-ResearchGate (2016) Questions. How can I do PerMANOVA pairwise contrasts in R? https://www.researchgate.net/post/How_can_I_do_PerMANOVA_pairwise_contrasts_in_R#view=588791bcf7b67e4e3e034809. Accessed 01 February 2017
