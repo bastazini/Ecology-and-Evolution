@@ -1,3 +1,3 @@
 # Ecology-and-Evolution
 
-This repository contains R codes/functions I used in some projects. Citation is at the top of each archive.
+This repository contains R codes/functions I used in some papers. Citation is at the top of each archive.
