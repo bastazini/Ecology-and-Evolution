@@ -24,6 +24,7 @@ assintotic=nls(similarity~a+b/(distance),start = list(a=0.32,b=0))
 
 AICctab(null,linear,exponential,assintotic,nobs=100,weights = TRUE, delta = TRUE, base = TRUE)
 
+#Plot data amd fitted models
 plot(similarity~distance,xlab="Area ", ylab="Riqueza")
 abline(null,col="green")
 abline(linear,col="red")
