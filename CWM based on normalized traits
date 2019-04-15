@@ -1,4 +1,6 @@
-A feature scaling method (min-max normalization) to rescale the range of traits to scale the range in [0, 1]
+#####################################
+###A feature scaling method (min-max normalization) to rescale the range of traits to scale the range in [0, 1]
+#####################################
 install.packages ("FD")
 ###Criar funcao para feturing scaling (nomalizacao [0,1])
 #funcao
