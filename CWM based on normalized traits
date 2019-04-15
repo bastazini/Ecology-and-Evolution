@@ -19,7 +19,7 @@ rownames(df.abund) <- c("Species.A", "Species.B", "Species.C")
 rm(Site.1,Site.2,Site.3)
 df.abund=as.matrix(t(df.abund))
 
-#padroniza usando a funcao feature.scaling
+#padroniza usando a funcao traits.padronizados
 traits.padronizados=feature.scaling(df.trt);traits.padronizados
 abund.padronizados=feature.scaling(df.abund);abund.padronizados
 
