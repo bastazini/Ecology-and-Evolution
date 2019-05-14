@@ -1,11 +1,11 @@
-###################### 
+######################### 
 #Function for performing PerMANOVAs using the function “adonis”  (R package vegan) direct on distance matrices, intead of  community matrices
 #From: Dias, R. A., Gianuca, A. T., Vizentin-Bugoni, J., Gonçalves, M. S. S., Bencke, G. A., & Bastazini, V.A.G.2017. Livestock disturbance in Brazilian grasslands influences avian species diversity via turnover. 
 #Biodiversity and Conservation 26(10): 2473–2490. 
 #DOI: https://doi.org/10.1007/s10531-017-1370-4
 #see msuplmentary material 2 for further details
 #This function was modified from  the function developed by Pedro Martinez Arbizu, which is available in the ResearchGate questions section (ResearchGate 2016; PM Arbizu in litt 2017).
-###############################
+#########################
 install.packages("vegan")
 require(vegan)
 
