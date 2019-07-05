@@ -1,0 +1,35 @@
+#Pacakges
+require(picante)
+
+#reading nexus files:
+my.phylo=read.nexus(file.choose())
+
+# Consensus tree
+arvore.cons=consensus(my.phylo,p=1, check.labels=T)
+
+#Ultrametricize tree:
+ultra.tree=compute.brlen(arvore.cons, method = "Grafen", power = 1) 
+
+# Save as "tre":
+write.tree(ultra.tree,"phylogeny")
+
+# Opening the new "phylogeny" file
+cons=read.tree(file.choose())
+
+# Visualization
+plot(cons, cex=0.5)
+
+# Checking values
+summary(cons)
+# or
+cons
+
+# Check the terminal node names
+list1<- (cons$tip.label)
+list1
+
+# Exporting names:
+write.csv(list1, file = "list.csv")
+
+# Inserting scale bar
+#add.scale.bar(cons, lenght = 0.1)
