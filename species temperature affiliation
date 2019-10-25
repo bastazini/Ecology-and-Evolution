@@ -1,0 +1,26 @@
+require(SYNCSA)
+require(picante)
+
+
+
+dados = read.table(pipe("pbpaste"), sep="\t", header=T,row.names=1)
+dim(dados)
+###community matrix
+com=as.data.frame(dados[,-1])
+com=t(com)
+###temperature ( or trait) matrix
+temp=as.matrix(dados[,1]);temp
+###number of iteractions
+N = 1000
+###type of null model
+null.model.1 = "independentswap"
+
+### result matrix
+resu= matrix(NA, nrow(com), N)
+###null model for temperature affiliation
+for(i in 1:N){
+  resu[,i] <- matrix.t(randomizeMatrix(com, null.model = null.model.1), temp, scale = FALSE)$matrix.T
+}
+
+# qunatis results
+apply(resu, 1, quantile, probs = c(0.025, 0.975))
