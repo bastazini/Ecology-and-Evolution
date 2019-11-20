@@ -1,0 +1,34 @@
+###Funçao para gerar 95%CI para community temperature score (CTS)
+#x = temperature affiliation per species
+#abundance  of each species
+ci.cts=function(x, abundance, conf.level = 0.95) {
+  require(Hmisc)
+  nx = length(x)
+  df = nx - 1
+  vx = wtd.var(x, abundance, normwt = TRUE) 
+  mx = weighted.mean(x, abundance)
+  stderr = sqrt(vx/nx)
+  tstat =mx/stderr ## not mx - mu
+  alpha = 1 - conf.level
+  cint = qt(1 - alpha/2, df)
+  cint = tstat + c(-cint, cint)
+  cint * stderr
+  
+}
+
+# Importar os dados ( matriz com a primeira coluna com o "temperature affiliation per species"e as demais colunas são as abundancias por sitio)
+dados=read.table(pipe("pbpaste"), sep="\t", header=T);dados
+# gerar matriz só de comunidades
+com=dados[-1];com
+
+# gerar matriz de resultados
+#as linhas são os limites inferiores e superiores, as colunas os valore spor sitio
+resu= matrix(NA, 2, ncol(com))
+rownames(resu) = c("lower CI", "upper CI")
+
+###Confidence interval
+for(i in 1:ncol(teste)){ 
+  resu[,i] =ci.cts(species_temperature,com[,i])
+  print(resu)
+}
+
