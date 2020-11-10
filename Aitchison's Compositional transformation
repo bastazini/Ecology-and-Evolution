@@ -3,6 +3,7 @@ Aitchison's Compositional transformation
 #Zij = Area i (lines) for individual j (columns)
 #g = the geometric mean
 
+## pacakge for geometric mean
 install.packages("psych")
 require(psych)
 
