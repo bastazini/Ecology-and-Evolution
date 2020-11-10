@@ -1,0 +1,28 @@
+Aitchison's Compositional transformation
+#Zij = ln(Yij/g(Yj)),
+#Zij = Area i (lines) for individual j (columns)
+#g = the geometric mean
+
+install.packages("psych")
+require(psych)
+
+
+##import data frame
+#df
+### As in the paper the observations are the columns, data must be trasnposed, observations on the columns
+df=t(df)
+##To get rid of 0s, transforming them to NAs
+dados[dados == 0] = NA
+
+
+##function
+
+# Zij = area i (lines) for individual j (columns)
+Aitchison = function(X){
+  gm = apply(X, MARGIN = 2, FUN = geometric.mean, na.rm = TRUE)
+  resu = log(sweep(X, MARGIN = 2, STATS = gm, FUN = "/"))
+  return(resu)
+} 
+
+test = Aitchison (df);test
+colSums(test)
