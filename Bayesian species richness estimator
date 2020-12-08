@@ -1,0 +1,162 @@
+###Extraido de:
+#Dorazio, Robert M., Nicholas J. Gotelli, and Aaron M. Ellison. "Modern methods of estimating biodiversity from presence-absence surveys." Biodiversity Loss in a Changing Planet, Rijeka, Croatia: InTech (2011): 277-302.
+#http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/publications/pdfs/Dorazio_Biodiversity_2011.pdf
+#pacotes
+require (rjags)
+load.module('glm')
+
+# definir o numero de replicas por sitio
+nrepls = 50   
+
+
+#  dados das sp
+Ymat=read.csv(file.choose(), sep=";");Ymat
+nsites = dim(Ymat)[2]
+n = dim(Ymat)[1]
+
+#  definir o tamanho da "super comunidade" (numero max de especies possiveis) 
+nzeros = 100 - n 
+
+#covariavel fluxo
+covariavel=read.csv(file.choose(), sep=";");covariavel
+X=as.matrix(covariavel)
+##usando estaçao do ano como covariavel
+X=as.matrix(c(3,	4,	4,	4,	1,	1,	1,	2,	2,	2,	3,	3,	3,	4,	4,	4,	1))            
+
+ncovs = 1 #se for so fluxo
+
+# processo de aumento de dados
+Mataug =matrix(0, nrow=nzeros, ncol=nsites)
+Mataug=edit(Mataug) # colocar os mesmo nomes nas cols
+Yaug=rbind(Ymat,Mataug)
+#dados como lista
+data = list(n=n, nzeros=nzeros, R=nsites, J=nrepls, Y=Yaug, X=X, ncovs=ncovs)
+
+
+
+
+#argumentos para JAGS
+
+# .... lista de outputs de  parametros
+params = c('alpha0', 'beta0', 'rho', 'sigma.b0', 'sigma.a0', 'omega', 'N', 'betaVec', 'sigma.b', 'p', 'b0', 'bVec', 'Z', 'delta')
+
+# inicializar Markov chain
+inits = function() {
+  omegaGuess = runif(1, n/(n+nzeros), 1)
+  betaVecGuess = rnorm(ncovs, 0,1)
+  psi.meanGuess = runif(1, .25,1)
+  beta0Guess = log(psi.meanGuess) - log(1-psi.meanGuess)
+  p.meanGuess = runif(1, .25,1)
+  alpha0Guess = log(p.meanGuess) - log(1-p.meanGuess)
+  rhoGuess = runif(1, 0,1)
+  tvar.sigma.b0Guess =  rnorm(1,0,1)
+  tvar.sigma.a0Guess =  rnorm(1,0,1)
+  sigma.b0Guess = abs(tvar.sigma.b0Guess)
+  sigma.a0Guess = abs(tvar.sigma.a0Guess)
+  tvar.sigma.bGuess = rnorm(ncovs, 0, 1)
+  deltaGuess = rbinom(ncovs, size=1, prob=0.5)
+  Zguess = matrix(0, nrow=n+nzeros, ncol=nsites)
+  ind = Yaug>0
+  Zguess[ind] = 1
+  
+  list(omega=omegaGuess, beta0=beta0Guess, alpha0=alpha0Guess, betaVec=betaVecGuess, rho=rhoGuess, 
+       delta = deltaGuess,
+       w=c(rep(1, n), rbinom(nzeros, size=1, prob=omegaGuess)),
+       b0=rnorm(n+nzeros, beta0Guess, sigma.b0Guess),
+       a0=rnorm(n+nzeros, alpha0Guess, sigma.a0Guess), Z=Zguess,
+       tvar.sigma.b0=tvar.sigma.b0Guess, tvar.sigma.a0=tvar.sigma.a0Guess, tvar.sigma.b=tvar.sigma.bGuess
+  )
+}
+
+
+# definicao do modelo em JAGS
+
+modelo= "model {
+    
+    
+    # prior distributions
+    
+    omega ~ dunif(0,1)
+    rho ~ dunif(-1,1)
+    
+    t.nu <- 7.763179      # Uniform prior
+    t.sigma <- 1.566267   # Uniform prior
+    ## t.nu <- 5.100         # Jeffreys' prior
+    ## t.sigma <- 2.482      # Jeffreys' prior
+    
+    beta0 ~ dt(0, pow(t.sigma,-2), t.nu)
+    alpha0 ~  dt(0, pow(t.sigma,-2), t.nu)
+    
+    
+    tvar.sigma.b0 ~ dt(0,1,1)  # Cauchy distribution
+    sigma.b0 <- abs(tvar.sigma.b0)  # half-Cauchy distribution
+    
+    tvar.sigma.a0 ~ dt(0,1,1)  # Cauchy distribution
+    sigma.a0 <- abs(tvar.sigma.a0)  # half-Cauchy distribution
+    
+    
+    for (j in 1:ncovs) {
+    betaVec[j] ~  dt(0, pow(t.sigma,-2), t.nu)
+    
+    tvar.sigma.b[j] ~ dt(0,1,1)  # Cauchy distribution
+    sigma.b[j] <- abs(tvar.sigma.b[j])  # half-Cauchy distribution
+    
+    delta[j] ~ dbern(0.5)
+    }
+    
+    
+    # para incluir covariavel X
+    for (k in 1:R) {
+    for (j in 1:ncovs) {
+    X.in[k,j] <- delta[j]*X[k,j]
+    }
+      }
+    
+    
+    
+    # modelo de ocorrencia e detect'cao especifico para especies e sitios
+    
+    for (i in 1:(n+nzeros)) {
+    w[i] ~ dbern(omega)
+    b0[i] ~ dnorm(beta0, pow(sigma.b0,-2))
+    
+    a0[i] ~ dnorm(alpha0 + (rho*sigma.a0/sigma.b0)*(b0[i] - beta0),  pow(sigma.a0,-2)/(1 - pow(rho,2)))
+    logit(p[i]) <- a0[i]
+    
+    for (j in 1:ncovs) {
+    bVec[i,j] ~ dnorm(betaVec[j],  pow(sigma.b[j],-2))
+    }
+    
+    for (k in 1:R) {
+    logit(psi[i,k]) <- b0[i] + inprod(bVec[i,], X.in[k,])
+    Z[i,k] ~ dbern(psi[i,k]*w[i])
+    Y[i,k] ~ dbin(p[i]*Z[i,k], J)
+    }
+    }
+    
+    # parametro derivado
+    N <- sum(w)
+    
+    }"
+
+
+
+  # ajuste do modelo
+jagmodelo = jags.model(textConnection(modelo), data=data, inits=inits, n.chains=2, n.adapt=1000)
+update(jagmodelo, n.iter=50000, by=100, progress.bar='text')   # burn in
+
+  #criar distribuicoes posteriores
+dist.posterior = coda.samples(jagmodelo, "N" , n.iter=100000, thin=50)  # posterior sample
+mypost = as.matrix(dist.posterior, chain=TRUE)
+
+#plots e ICr95%
+plot(density(mypost[,2]),xlab=" Number of species", main="", lwd=4)
+quantile(mypost[,2],prob=(c(0.025, 0.5,0.975)))
+LI=quantile(mypost[,2],prob=0.025)
+mediana=quantile(mypost[,2],prob=0.5)
+LS=quantile(mypost[,2],prob=0.975)
+abline(v=LI,col="blue",lty=4,lwd=3)
+abline(v=mediana,col="red",lty=4,lwd=3)
+abline(v=LS,col="blue",lty=4,lwd=3)
+
+
