@@ -1,0 +1,32 @@
+require(packcircles)
+require(ggpubr)
+require(ggplot2)
+library(viridis)
+dados=read.table(pipe("pbpaste"), sep="\t", header=F);dados
+data=table(dados);data
+data=as.data.frame(data)
+packing <- circleProgressiveLayout(data$Freq, sizetype='area')
+packing$radius <- 0.95*packing$radius
+data <- cbind(data, packing)
+dat.gg <- circleLayoutVertices(packing, npoints=50)
+
+# Plot 
+impact=ggplot() + 
+  geom_polygon(data = dat.gg, aes(x, y, group = id, fill=id), colour = "black", alpha = 0.8) +
+  scale_fill_viridis() +
+  geom_text(data = data, aes(x, y, size=Freq, label = dados), color="black") +
+  theme_void() + 
+  theme(legend.position="none")+ 
+  coord_equal()
+
+int=ggplot() + 
+  geom_polygon(data = dat.gg, aes(x, y, group = id, fill=id), colour = "black", alpha = 0.8) +
+  scale_fill_viridis() +
+  geom_text(data = data, aes(x, y, size=15, label = dados), color="black") +
+  theme_void() + 
+  theme(legend.position="none")+ 
+  coord_equal()
+
+ggarrange(int, impact + rremove("x.text"), 
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
