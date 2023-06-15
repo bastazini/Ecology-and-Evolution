@@ -6,7 +6,7 @@ require (rjags)
 load.module('glm')
 
 # definir o numero de replicas por sitio
-nrepls = 50   
+nrepls = 100   
 
 
 #  dados das sp
