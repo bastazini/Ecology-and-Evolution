@@ -18,9 +18,10 @@ null=lm(similarity~1)
 # linear
 linear=lm(similarity~distance) 
 # exponential
-exponential=nls(similarity~a+b*log(distance),start = list(a=0.32,b=0))
+exponential=nls(similarity~a+b*log(distance),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2]))
 # assintotic
-assintotic=nls(similarity~a+b/(distance),start = list(a=0.32,b=0)) 
+assintotic=nls(similarity~a+b/(distance),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2])) 
+
 
 AICctab(null,linear,exponential,assintotic,nobs=100,weights = TRUE, delta = TRUE, base = TRUE)
 
