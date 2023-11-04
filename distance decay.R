@@ -17,7 +17,7 @@ linear=lm(y~x)
 
 # exponential
 exponential =nls(y ~ a * exp(b * x), start = list(a = coefficients(linear)[1], b = coefficients(linear)[2]))
-exponential_log= =nls(y~a+b*log(x),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2]))
+exponential_log= nls(y~a+b*log(x),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2]))
 # asymptotic
 asymptotic=nls(y~a+b/(x),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2])) 
 
