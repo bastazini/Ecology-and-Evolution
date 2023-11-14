@@ -1,0 +1,32 @@
+data vectors  representing site similarity and geographic distances between sites
+#y=similarity
+#x=distance
+#
+#require(bbmle)
+#Models
+# null
+null=lm(y~1)
+# linear
+linear=lm(y~x) 
+# exponential
+exponential =nls(y ~ a * exp(b * x), start = list(a = coefficients(linear)[1], b = coefficients(linear)[2]))
+#log
+logarithmic= nls(y~a+b*log(x),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2]))
+# asymptotic
+asymptotic=nls(y~a+b/(x),start = list(a = coefficients(linear)[1], b = coefficients(linear)[2])) 
+
+
+BICtab(null,linear,exponential,
+       logarithmic,nobs=length(x),weights = TRUE, delta = TRUE, base = TRUE)
+
+#Plot data amd fitted models
+#par(mfrow = c(1, 3))
+plot(y~x,xlab="Area", ylab="Obs.EVE", col=redundancy,pch=19)
+abline(null,col="green")
+abline(linear,col="red")
+lines(coefficients(logarithmic)[1]+(coefficients(logarithmic)[2])*log(1:max(x)))
+lines(coefficients(asymptotic)[1]+(coefficients(asymptotic)[2])/(1:max(x)), col="blue")
+### check if this code is correct for exponential curve
+lines(1:max(x), coefficients(exponential)[1] * exp(coefficients(exponential)[2] * 1:max(x)), col = "purple")
+legend("bottomright", legend=c("Null", "Linear", "Exponential","Asymptotic"), col=c("green","red", "blue", "purple"),
+ box.lty=0,cex=0.8)
