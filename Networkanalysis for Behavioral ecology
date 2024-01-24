@@ -1,0 +1,65 @@
+# Install and load required packages
+if (!require(igraph)) install.packages("igraph")
+library(igraph)
+
+# Generate a random network for demonstration
+set.seed(123)
+nodes <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+edges <- data.frame(from = sample(nodes, 15, replace = TRUE),
+                    to = sample(nodes, 15, replace = TRUE))
+graph <- graph_from_data_frame(edges)
+
+# Plot the network
+plot(graph, main = "Behavioral Ecology Network", vertex.label.dist = 2, vertex.color = "lightblue", edge.color = "gray")
+
+# 1. Node-level metrics
+# Degree centrality
+degree <- degree(graph)
+cat("Degree Centrality:\n")
+print(degree)
+
+# 2. Network-level metrics
+# Density
+density_value <- graph.density(graph)
+cat("\nNetwork Density:\n")
+print(density_value)
+
+# 3. Centrality measures
+# Betweenness centrality
+betweenness <- betweenness(graph)
+cat("\nBetweenness Centrality:\n")
+print(betweenness)
+
+# 4. Modularity
+modularity_value <- cluster_optimal(graph)
+cat("\nModularity:\n")
+print(modularity_value)
+
+# 5. Community detection
+communities <- walktrap.community(graph)
+cat("\nCommunities:\n")
+print(communities$membership)
+
+# 6. Eccentricity
+eccentricity <- eccentricity(graph)
+cat("\nEccentricity:\n")
+print(eccentricity)
+
+# 7. Average path length
+avg_path_length <- average.path.length(graph)
+cat("\nAverage Path Length:\n")
+print(avg_path_length)
+
+# 8. Network visualization
+# Highlight communities in the plot
+plot(graph, main = "Behavioral Ecology Network with Communities", vertex.label.dist = 2, vertex.color = communities$membership, edge.color = "gray")
+
+# 9. Connectivity
+is_connected <- is.connected(graph)
+cat("\nIs Connected:\n")
+print(is_connected)
+
+# 10. Diameter
+diameter_value <- diameter(graph)
+cat("\nDiameter:\n")
+print(diameter_value)
